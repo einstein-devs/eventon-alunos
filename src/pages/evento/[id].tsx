@@ -1,4 +1,6 @@
 import { Evento } from "@/domain/entities/evento";
+import { HOST_API } from "@/utils/api-config";
+import { formatarData } from "@/utils/formater";
 import { CaretLeft } from "@phosphor-icons/react";
 import { NextPageContext } from "next";
 import Link from "next/link";
@@ -49,37 +51,57 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
           </header>
           <div className="flex-1 w-full px-6 py-2">
             <div
-              style={{
-                backgroundImage: "url('')",
-              }}
-              className={"rounded-lg w-full h-32 animate-pulse bg-gray-200"}
+              style={
+                evento.urlImagem
+                  ? {
+                      backgroundImage:
+                        "url('" +
+                        HOST_API +
+                        "/imagens/" +
+                        evento.urlImagem +
+                        "')",
+                    }
+                  : {}
+              }
+              className={
+                "rounded-lg bg-no-repeat bg-cover bg-center w-full h-40 bg-gray-200"
+              }
             ></div>
 
             <section className="p-4">
-              <div className="py-4">
-                <p className="text-md">
-                  <span className="font-semibold">Local: </span> Sala de
-                  informatica 23
+              <div className="py-4 text-md">
+                <p>
+                  <span className="font-semibold">Local: </span>{" "}
+                  {evento.local.titulo}
                 </p>
-                <p className="text-md">
-                  <span className="font-semibold">Referência: </span> Ao lado do
-                  bebedouro
-                </p>
+
+                {evento.local.descricao && (
+                  <p>
+                    {" "}
+                    <span className="font-semibold">Referência: </span>{" "}
+                    {evento.local.descricao}
+                  </p>
+                )}
               </div>
 
-              <div className="py-2">
+              <div className="py-2 flex justify-between">
                 <p className="text-md">
-                  <span className="font-semibold">Data e hora: </span>{" "}
-                  28/01/2023 às 23:40
+                  <span className="font-semibold">Data início: </span>{" "}
+                  {formatarData(evento.dataHoraInicio)}
+                </p>
+                <p className="text-md">
+                  <span className="font-semibold">Data termino: </span>{" "}
+                  {formatarData(evento.dataHoraTermino)}
                 </p>
               </div>
-              <div className="py-2">
-                <p className="text-md">
-                  <span className="font-semibold">Sobre o evento: </span> O
-                  evento faz referência a turma de TADS do 3º semestre e contará
-                  com a presença..
-                </p>
-              </div>
+              {evento.descricao && (
+                <div className="py-2">
+                  <p className="text-md">
+                    <span className="font-semibold">Sobre o evento: </span>{" "}
+                    {evento.descricao}
+                  </p>
+                </div>
+              )}
             </section>
 
             <section className="mt-8">
@@ -88,7 +110,8 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
               </button>
 
               <p className="text-sm mt-6 block text-center">
-                <span className="font-bold">Inscritos: </span>24
+                <span className="font-bold">Inscritos: </span>
+                {evento.inscritos}
               </p>
             </section>
           </div>
@@ -106,6 +129,7 @@ InfoEventoPage.getInitialProps = async ({
       process.env.NEXT_PUBLIC_HOST_API + "/eventos/" + query["id"]
     );
     const responseData = await response.json();
+    console.log(responseData["data"]);
 
     return {
       evento: responseData["data"],

@@ -21,7 +21,6 @@ export default function HomePage() {
         process.env.NEXT_PUBLIC_HOST_API + "/eventos"
       );
       const responseData = await response.json();
-      console.log(responseData);
 
       setEventos(responseData["data"]);
     } catch {
@@ -32,8 +31,8 @@ export default function HomePage() {
   }
 
   return (
-    <main className="h-screen w-screen bg-white flex flex-col max-md:max-w-full max-w-screen-md mx-auto">
-      <header className="w-full px-6 pt-4 flex items-center justify-between">
+    <main className="h-screen w-screen bg-white flex flex-col">
+      <header className="w-full px-6 pt-4 flex items-center justify-between max-md:max-w-full max-w-screen-md mx-auto">
         <h1 className="text-2xl font-bold">Eventos</h1>
 
         <Link
@@ -45,7 +44,7 @@ export default function HomePage() {
           <p className="max-md:hidden">Acessar conta</p>
         </Link>
       </header>
-      <div className="h-16 w-full flex items-center mt-6">
+      <div className="h-16 w-full flex items-center mt-6 max-md:max-w-full max-w-screen-md mx-auto">
         <button className="hover:bg-orange-50 transition-colors border-b-[1px] border-b-orange-400 h-full flex-1 flex items-center justify-center">
           <p className="text-md font-bold text-orange-400">Explorar</p>
         </button>
@@ -55,17 +54,19 @@ export default function HomePage() {
       </div>
 
       <div className="flex-1 w-full h-full flex flex-col p-6 gap-y-3 overflow-scroll">
-        {!isLoading &&
-          eventos?.map((evento) => (
-            <CardEvento key={evento.id} evento={evento} />
-          ))}
+        <div className="flex-1 w-full max-md:max-w-full max-w-screen-md mx-auto">
+          {!isLoading &&
+            eventos?.map((evento) => (
+              <CardEvento key={evento.id} evento={evento} />
+            ))}
 
-        {isLoading &&
-          [0, 1, 2, 3, 4, 5].map((i) => (
-            <div key={i}>
-              <SkeletonContainer />
-            </div>
-          ))}
+          {isLoading &&
+            [0, 1, 2, 3, 4, 5].map((i) => (
+              <div key={i}>
+                <SkeletonContainer />
+              </div>
+            ))}
+        </div>
       </div>
     </main>
   );

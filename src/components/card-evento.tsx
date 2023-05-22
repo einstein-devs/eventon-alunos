@@ -1,4 +1,6 @@
 import { Evento } from "@/domain/entities/evento";
+import { HOST_API } from "@/utils/api-config";
+import { formatarData } from "@/utils/formater";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,22 +9,11 @@ type CardEventoProps = {
 };
 
 export default function CardEvento(props: CardEventoProps) {
-  function formatarData(dataString: any) {
-    const date = new Date(dataString);
-
-    const dia = ("0" + date.getDate()).slice(-2);
-    const mes = ("0" + (date.getMonth() + 1)).slice(-2);
-    const ano = date.getFullYear();
-    const horas = ("0" + date.getHours()).slice(-2);
-    const minutos = ("0" + date.getMinutes()).slice(-2);
-    return `${dia}/${mes}/${ano} às ${horas}:${minutos}`;
-  }
-
   return (
-    <div className="bg-white rounded-md border-[1px]">
+    <div className="bg-white rounded-md border-[1px] mb-4">
       {props.evento.urlImagem && (
         <img
-          src={`${process.env.NEXT_PUBLIC_HOST_API}/imagens/${props.evento.urlImagem}`}
+          src={`${HOST_API}/imagens/${props.evento.urlImagem}`}
           alt="Imagem do evento"
           className="h-[7rem] w-full object-cover rounded-tl-md rounded-tr-md"
         />
