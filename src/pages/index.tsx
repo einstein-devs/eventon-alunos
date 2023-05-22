@@ -1,13 +1,17 @@
 import CardEvento from "@/components/card-evento";
 import { SkeletonContainer } from "@/components/skeleton-container";
-import { Evento } from "@/domain/entities/evento";
+import { AuthContext } from "@/contexts/auth.context";
+import { Evento } from "@/entities/evento";
+import { HOST_API } from "@/utils/api-config";
 import { IdentificationBadge } from "@phosphor-icons/react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [eventos, setEventos] = useState<Evento[]>([]);
+
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     getEventos();
@@ -17,9 +21,7 @@ export default function HomePage() {
     try {
       setIsLoading(true);
 
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_HOST_API + "/eventos"
-      );
+      const response = await fetch(HOST_API + "/eventos");
       const responseData = await response.json();
 
       setEventos(responseData["data"]);
@@ -48,9 +50,11 @@ export default function HomePage() {
         <button className="hover:bg-orange-50 transition-colors border-b-[1px] border-b-orange-400 h-full flex-1 flex items-center justify-center">
           <p className="text-md font-bold text-orange-400">Explorar</p>
         </button>
-        <button className="hover:bg-orange-50 hover:text-orange-400 transition-colors border-b-[1px] h-full flex-1 flex items-center justify-center">
-          <p className="text-md font-bold">Inscritos</p>
-        </button>
+        {isAuthenticated && (
+          <button className="hover:bg-orange-50 hover:text-orange-400 transition-colors border-b-[1px] h-full flex-1 flex items-center justify-center">
+            <p className="text-md font-bold">Inscritos</p>
+          </button>
+        )}
       </div>
 
       <div className="flex-1 w-full h-full flex flex-col p-6 gap-y-3 overflow-scroll">
