@@ -1,4 +1,4 @@
-import { Evento } from "@/domain/entities/evento";
+import { Evento } from "@/entities/evento";
 import { HOST_API } from "@/utils/api-config";
 import { formatarData } from "@/utils/formater";
 import { CaretLeft } from "@phosphor-icons/react";
@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 type InfoEventoPageProps = {
-  evento: Evento | null;
+  evento: Evento;
 };
 
 export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
@@ -16,6 +16,15 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
 
   function voltarPaginaAnterior() {
     router.back();
+  }
+
+  const dataAtual = new Date();
+
+  function isIniciado(): boolean {
+    return (
+      new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf() &&
+      new Date(evento.dataHoraInicio).valueOf() <= dataAtual.valueOf()
+    );
   }
 
   return (
@@ -84,7 +93,7 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
                 )}
               </div>
 
-              <div className="py-2 flex justify-between">
+              <div className="py-2 flex justify-between max-sm:flex-col">
                 <p className="text-md">
                   <span className="font-semibold">Data início: </span>{" "}
                   {formatarData(evento.dataHoraInicio)}
@@ -93,6 +102,13 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
                   <span className="font-semibold">Data termino: </span>{" "}
                   {formatarData(evento.dataHoraTermino)}
                 </p>
+              </div>
+              <div className="py-2">
+                {isIniciado() && (
+                  <p className="text-md font-bold text-green-400">
+                    Evento em curso...
+                  </p>
+                )}
               </div>
               {evento.descricao && (
                 <div className="py-2">
@@ -120,23 +136,3 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
     </main>
   );
 }
-
-InfoEventoPage.getInitialProps = async ({
-  query,
-}: NextPageContext): Promise<InfoEventoPageProps> => {
-  try {
-    const response = await fetch(
-      process.env.NEXT_PUBLIC_HOST_API + "/eventos/" + query["id"]
-    );
-    const responseData = await response.json();
-    console.log(responseData["data"]);
-
-    return {
-      evento: responseData["data"],
-    };
-  } catch {
-    return {
-      evento: null,
-    };
-  }
-};

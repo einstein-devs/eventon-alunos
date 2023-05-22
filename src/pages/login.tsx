@@ -5,9 +5,10 @@ import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { LoginErrorData } from "@/services/auth";
 
 const schema = z.object({
   ra: z.string().nonempty("O RA é obrigatório"),
@@ -23,9 +24,18 @@ export default function LoginPage() {
     resolver: zodResolver(schema),
   });
   const { signIn } = useContext(AuthContext);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function onSubmit(data: any) {
-    await signIn(data);
+    try {
+      await signIn(data);
+    } catch (error) {
+      if (error instanceof LoginErrorData) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Ocorreu um erro ao realizar login!");
+      }
+    }
   }
 
   const router = useRouter();
@@ -74,6 +84,12 @@ export default function LoginPage() {
             )}
           </div>
 
+          {errorMessage && (
+            <div className="w-full flex flex-col items-center mt-10">
+              <span className="text-sm text-red-500">{errorMessage}</span>
+            </div>
+          )}
+
           <button className="mt-8 text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg">
             Acessar
           </button>
@@ -93,7 +109,6 @@ export default function LoginPage() {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const { ["@eventon.token"]: token } = parseCookies(context);
 
-  console.log("OIEEEE");
   if (token) {
     return {
       redirect: {

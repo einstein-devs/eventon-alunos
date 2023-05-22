@@ -8,6 +8,7 @@ export class Evento {
     nome: string;
   };
   dataHoraInicio: Date;
+  dataHoraTermino: Date;
 
   constructor({
     id,
@@ -17,6 +18,7 @@ export class Evento {
     urlImagem,
     usuario,
     dataHoraInicio,
+    dataHoraTermino,
   }: Evento) {
     this.id = id;
     this.titulo = titulo;
@@ -25,5 +27,6 @@ export class Evento {
     this.urlImagem = urlImagem;
     this.usuario = usuario;
     this.dataHoraInicio = dataHoraInicio;
+    this.dataHoraTermino = dataHoraTermino;
   }
 }
