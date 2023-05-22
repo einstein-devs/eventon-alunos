@@ -2,7 +2,7 @@ import { Usuario } from "@/entities/usuario";
 import { api } from "@/services/api";
 import { getUserInformation, LoginData, signInRequest } from "@/services/auth";
 import Router from "next/router";
-import { parseCookies, setCookie, destroyCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { createContext, useEffect, useState } from "react";
 
 type AuthContextType = {
@@ -61,6 +61,14 @@ export function AuthProvider({ children }: any) {
     setUser(null);
   }
 
+  if (isLoadingUser) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <p className="text-sm text-center">Carregando usuario</p>
+      </div>
+    );
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -71,13 +79,7 @@ export function AuthProvider({ children }: any) {
         signOut,
       }}
     >
-      {isLoadingUser ? (
-        <div className="w-screen h-screen flex items-center justify-center">
-          <p className="text-sm text-center">Carregando usuario</p>
-        </div>
-      ) : (
-        children
-      )}
+      {children}
     </AuthContext.Provider>
   );
 }

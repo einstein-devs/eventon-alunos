@@ -9,6 +9,12 @@ export class Evento {
   };
   dataHoraInicio: Date;
   dataHoraTermino: Date;
+  inscritos: number;
+  local: {
+    titulo: string;
+    descricao?: string;
+  };
+  estaInscrito: boolean;
 
   constructor({
     id,
@@ -19,6 +25,9 @@ export class Evento {
     usuario,
     dataHoraInicio,
     dataHoraTermino,
+    inscritos,
+    local,
+    estaInscrito,
   }: Evento) {
     this.id = id;
     this.titulo = titulo;
@@ -28,5 +37,8 @@ export class Evento {
     this.usuario = usuario;
     this.dataHoraInicio = dataHoraInicio;
     this.dataHoraTermino = dataHoraTermino;
+    this.inscritos = inscritos;
+    this.local = local;
+    this.estaInscrito = estaInscrito;
   }
 }

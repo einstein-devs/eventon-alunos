@@ -1,6 +1,5 @@
 import { AuthContext } from "@/contexts/auth.context";
 import { CaretLeft } from "@phosphor-icons/react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
@@ -29,7 +28,7 @@ export default function MeuPerfilPage() {
         </button>
         <h1 className="text-2xl font-bold">Perfil</h1>
       </header>
-      <div className="w-full flex-1 overflow-scroll py-4 px-6 flex flex-col max-md:max-w-full max-w-screen-md mx-auto">
+      <div className="w-full flex-1 overflow-y-auto py-4 px-6 flex flex-col max-md:max-w-full max-w-screen-md mx-auto">
         <div className="text-gray-500 w-full text-center leading-normal">
           <h2 className="font-bold text-xl">{user!.nome}</h2>
           <p className="text-md font-semibold">{user!.codigo}</p>

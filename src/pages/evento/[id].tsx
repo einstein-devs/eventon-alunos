@@ -1,21 +1,45 @@
+import { AuthContext } from "@/contexts/auth.context";
 import { Evento } from "@/entities/evento";
+import { api } from "@/services/api";
 import { HOST_API } from "@/utils/api-config";
 import { formatarData } from "@/utils/formater";
 import { CaretLeft } from "@phosphor-icons/react";
-import { NextPageContext } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
-type InfoEventoPageProps = {
-  evento: Evento;
-};
+export default function InfoEventoPage() {
+  const [evento, setEvento] = useState<Evento>({} as Evento);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
+  const { user } = useContext(AuthContext);
   const router = useRouter();
+  const { query } = router;
 
   function voltarPaginaAnterior() {
     router.back();
+  }
+
+  useEffect(() => {
+    if (query.id) {
+      loadScreen();
+    }
+  }, [query.id]);
+
+  async function loadScreen() {
+    try {
+      const response = await api.get(`/eventos/${query["id"]}`, {
+        params: {
+          usuarioId: user?.id,
+        },
+      });
+      console.log(response.data);
+
+      setEvento(response.data["data"]);
+      setIsLoading(false);
+    } catch (_) {
+      router.push("/");
+    }
   }
 
   const dataAtual = new Date();
@@ -24,6 +48,18 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
     return (
       new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf() &&
       new Date(evento.dataHoraInicio).valueOf() <= dataAtual.valueOf()
+    );
+  }
+
+  function isFinalizado(): boolean {
+    return new Date(evento.dataHoraTermino).valueOf() <= dataAtual.valueOf();
+  }
+
+  if (isLoading) {
+    return (
+      <div className="w-screen h-screen flex items-center justify-center">
+        <p className="text-sm text-center">Carregando evento</p>
+      </div>
     );
   }
 
@@ -109,6 +145,12 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
                     Evento em curso...
                   </p>
                 )}
+
+                {isFinalizado() && (
+                  <p className="text-md font-bold text-red-400">
+                    Evento finalizado
+                  </p>
+                )}
               </div>
               {evento.descricao && (
                 <div className="py-2">
@@ -120,10 +162,14 @@ export default function InfoEventoPage({ evento }: InfoEventoPageProps) {
               )}
             </section>
 
-            <section className="mt-8">
-              <button className="text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg">
-                Confirmar presença
-              </button>
+            <section className="mt-8 w-full flex flex-col items-center justify-center">
+              {!isFinalizado() && (
+                <button className="text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg">
+                  {isIniciado() && evento.estaInscrito
+                    ? "Confirmar presença"
+                    : "Inscrever-se"}
+                </button>
+              )}
 
               <p className="text-sm mt-6 block text-center">
                 <span className="font-bold">Inscritos: </span>

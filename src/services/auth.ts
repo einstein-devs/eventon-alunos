@@ -1,6 +1,4 @@
 import { Usuario } from "@/entities/usuario";
-import { HOST_API } from "@/utils/api-config";
-import axios from "axios";
 import { api } from "./api";
 
 export type LoginData = {
@@ -23,9 +21,6 @@ export class LoginErrorData {
 
 export async function getUserInformation() {
   const response = await api.get("/me");
-
-  console.log("TESTE ");
-  console.log(response.data);
 
   return response.data["data"];
 }
