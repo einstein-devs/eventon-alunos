@@ -22,23 +22,33 @@ export function AuthProvider({ children }: any) {
   const isAuthenticated = !!user;
 
   useEffect(() => {
-    const { "@eventon.token": token } = parseCookies();
+    loadUser();
+  }, []);
 
-    if (token) {
-      setIsLoadingUser(true);
+  async function loadUser() {
+    try {
+      const { "@eventon.token": token } = parseCookies();
 
-      getUserInformation().then((response) => {
+      if (token) {
+        setIsLoadingUser(true);
+
+        const response = await getUserInformation();
+
+        console.log(response);
+
         if (response) {
           setUser(response);
         } else {
-          // logout
+          signOut();
         }
-        setIsLoadingUser(false);
-      });
-    } else {
+      }
+    } catch (e) {
+      console.log(e);
+      signOut();
+    } finally {
       setIsLoadingUser(false);
     }
-  }, []);
+  }
 
   async function signIn(data: LoginData) {
     const { user, token } = await signInRequest(data);

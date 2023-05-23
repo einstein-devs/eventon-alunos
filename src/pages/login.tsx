@@ -7,8 +7,8 @@ import { useRouter } from "next/router";
 import { parseCookies } from "nookies";
 import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 import { z } from "zod";
-import { LoginErrorData } from "@/services/auth";
 
 const schema = z.object({
   ra: z.string().nonempty("O RA é obrigatório"),
@@ -25,16 +25,20 @@ export default function LoginPage() {
   });
   const { signIn } = useContext(AuthContext);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function onSubmit(data: any) {
     try {
+      setIsLoading(true);
+
       await signIn(data);
-    } catch (error) {
-      if (error instanceof LoginErrorData) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage("Ocorreu um erro ao realizar login!");
-      }
+    } catch (error: any) {
+      toast.error(error?.message ?? "Ocorreu um erro ao realizar login!", {
+        closeButton: true,
+        closeOnClick: true,
+      });
+    } finally {
+      setIsLoading(false);
     }
   }
 

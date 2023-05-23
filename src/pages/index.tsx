@@ -1,14 +1,13 @@
 import CardEvento from "@/components/card-evento";
 import { SkeletonContainer } from "@/components/skeleton-container";
+import { TabButton } from "@/components/tab-button";
 import { AuthContext } from "@/contexts/auth.context";
 import { Evento } from "@/entities/evento";
+import { api } from "@/services/api";
 import { HOST_API } from "@/utils/api-config";
 import { IdentificationBadge } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
-import classNames from "classnames";
-import { TabButton } from "@/components/tab-button";
-import { api } from "@/services/api";
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -122,7 +121,7 @@ export default function HomePage() {
 
           {isLoading &&
             [0, 1, 2, 3, 4, 5].map((i) => (
-              <div key={i}>
+              <div key={i} className="mb-4">
                 <SkeletonContainer />
               </div>
             ))}
