@@ -2,6 +2,8 @@ export class Certificado {
   id: string;
   evento: {
     titulo: string;
+    dataHoraInicio: Date;
+    dataHoraTermino: Date;
   };
   usuario: {
     nome: string;
