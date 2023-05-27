@@ -99,7 +99,7 @@ export default function HomePage() {
         )}
       </div>
 
-      <div className="flex-1 w-full h-full flex flex-col p-6 gap-y-3 overflow-scroll">
+      <div className="flex-1 w-full h-full flex flex-col p-6 gap-y-3 overflow-y-auto">
         <div className="flex-1 w-full max-md:max-w-full max-w-screen-md mx-auto">
           {!isLoading &&
             pageSelected == "explorar" &&
@@ -113,11 +113,19 @@ export default function HomePage() {
               <CardEvento key={evento.id} evento={evento} />
             ))}
 
-          {eventos.length == 0 && !isLoading && (
+          {eventos.length == 0 && !isLoading && pageSelected == "explorar" && (
             <div className="w-full text-center py-6">
               <p>Nenhum evento encontrado!</p>
             </div>
           )}
+
+          {eventosInscritos.length == 0 &&
+            !isLoading &&
+            pageSelected == "inscritos" && (
+              <div className="w-full text-center py-6">
+                <p>Nenhum evento inscrito no momento!</p>
+              </div>
+            )}
 
           {isLoading &&
             [0, 1, 2, 3, 4, 5].map((i) => (

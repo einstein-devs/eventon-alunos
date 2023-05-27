@@ -1,5 +1,6 @@
 import { AuthContext } from "@/contexts/auth.context";
 import { CaretLeft } from "@phosphor-icons/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext } from "react";
 
@@ -45,9 +46,12 @@ export default function MeuPerfilPage() {
               Editar perfil
             </button>
 
-            <button className="h-[42px] flex items-center justify-center bg-orange-100 text-orange-400 border border-orange-400 font-bold w-full rounded-lg">
+            <Link
+              href="/certificados"
+              className="h-[42px] flex items-center justify-center bg-orange-100 text-orange-400 border border-orange-400 font-bold w-full rounded-lg"
+            >
               Meus certificados
-            </button>
+            </Link>
           </div>
 
           <button

@@ -3,15 +3,32 @@ import { Evento } from "@/entities/evento";
 import { api } from "@/services/api";
 import { HOST_API } from "@/utils/api-config";
 import { formatarData } from "@/utils/formater";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretLeft, X } from "@phosphor-icons/react";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import Modal from "react-modal";
 import { toast } from "react-toastify";
+import { z } from "zod";
+
+const schema = z.object({
+  codigo: z.string().nonempty("O código do evento é obrigatório"),
+});
 
 export default function InfoEventoPage() {
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(schema),
+  });
+
   const [evento, setEvento] = useState<Evento>({} as Evento);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoadingInscricao, setIsLoadingInscricao] = useState<boolean>(false);
   const [isLoadingPresenca, setIsLoadingPresenca] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -61,7 +78,7 @@ export default function InfoEventoPage() {
 
   async function confirmarInscricao() {
     try {
-      setIsLoadingPresenca(true);
+      setIsLoadingInscricao(true);
 
       await api.post(`/presencas/${query["id"]}`);
 
@@ -80,24 +97,36 @@ export default function InfoEventoPage() {
         closeOnClick: true,
       });
     } finally {
-      setIsLoadingPresenca(false);
+      setIsLoadingInscricao(false);
     }
   }
 
-  async function confirmarPresenca() {
+  async function confirmarPresenca(data: any) {
     try {
       setIsLoadingPresenca(true);
-      await handleOpenModal();
-      const response = await api.get(`/eventos/${query["id"]}`, {
-        params: {
-          usuarioId: user?.id,
-        },
-      });
-    } catch (_) {
-      toast.error("Ocorreu um erro ao confirmar presença!", {
+
+      await api.post(`/presencas/${query["id"]}/confirmar/${data.codigo}`);
+
+      evento.estaConfimado = true;
+      evento.certificadoGerado = true;
+
+      setEvento(evento);
+
+      toast.success("Presença confirmada, certificado gerado com sucesso!", {
         closeButton: true,
         closeOnClick: true,
       });
+
+      handleCloseModal();
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data.message ??
+          "Ocorreu um erro ao confirmar presença!",
+        {
+          closeButton: true,
+          closeOnClick: true,
+        }
+      );
     } finally {
       setIsLoadingPresenca(false);
     }
@@ -136,17 +165,26 @@ export default function InfoEventoPage() {
               <p>Confirmação de segurança</p>
             </div>
 
-            <div className="mt-1 flex flex-col gap-y-6">
+            <form
+              onSubmit={handleSubmit(confirmarPresenca)}
+              className="mt-1 flex flex-col gap-y-6"
+            >
               <input
-                type="password"
+                type="text"
                 placeholder="Digite o código do evento"
                 className="mt-4 h-[42px] px-4 w-full text-md bg-gray-50 border border-gray-100 rounded-lg"
+                {...register("codigo")}
               />
+              {errors.codigo && (
+                <span className="text-sm text-red-500">
+                  {errors.codigo.message}
+                </span>
+              )}
 
               <button className="text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg">
                 Confirmar
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </Modal>
@@ -224,18 +262,31 @@ export default function InfoEventoPage() {
         </section>
 
         <section className="mt-8 w-full flex flex-col items-center justify-center">
-          {!isFinalizado() && user && (
+          {evento.certificadoGerado && (
+            <Link
+              href={`/certificados`}
+              className="text-md text-orange-400 underline"
+            >
+              Certificado gerado!
+            </Link>
+          )}
+          {user && evento.estaInscrito && !evento.estaConfimado && (
             <button
-              onClick={
-                evento.estaInscrito ? confirmarPresenca : confirmarInscricao
-              }
+              onClick={handleOpenModal}
               className="text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg"
             >
-              {isLoadingPresenca && "Confirmando presença..."}
+              {isLoadingPresenca
+                ? "Confirmando presença..."
+                : "Confirmar presença"}
+            </button>
+          )}
 
-              {isIniciado() && evento.estaInscrito && !isLoadingPresenca
-                ? "Confirmar presença"
-                : "Inscrever-se"}
+          {!isFinalizado() && !isIniciado() && !evento.estaInscrito && user && (
+            <button
+              onClick={confirmarInscricao}
+              className="text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg"
+            >
+              {isLoadingInscricao ? "Carregando..." : "Inscrever-se"}
             </button>
           )}
 

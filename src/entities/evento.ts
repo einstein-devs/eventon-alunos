@@ -15,6 +15,8 @@ export class Evento {
     descricao?: string;
   };
   estaInscrito: boolean;
+  estaConfimado: boolean;
+  certificadoGerado: boolean;
 
   constructor({
     id,
@@ -28,6 +30,8 @@ export class Evento {
     inscritos,
     local,
     estaInscrito,
+    estaConfimado,
+    certificadoGerado,
   }: Evento) {
     this.id = id;
     this.titulo = titulo;
@@ -40,5 +44,7 @@ export class Evento {
     this.inscritos = inscritos;
     this.local = local;
     this.estaInscrito = estaInscrito;
+    this.estaConfimado = estaConfimado;
+    this.certificadoGerado = certificadoGerado;
   }
 }

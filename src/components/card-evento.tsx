@@ -1,7 +1,6 @@
-import { Evento } from "@/domain/entities/evento";
+import { Evento } from "@/entities/evento";
 import { HOST_API } from "@/utils/api-config";
 import { formatarData } from "@/utils/formater";
-import Image from "next/image";
 import Link from "next/link";
 
 type CardEventoProps = {
@@ -10,7 +9,7 @@ type CardEventoProps = {
 
 export default function CardEvento(props: CardEventoProps) {
   return (
-    <div className="bg-white rounded-md border-[1px] mb-4">
+    <div className="bg-white rounded-md border-[1px] mb-4 max-sm:text-sm">
       {props.evento.urlImagem && (
         <img
           src={`${HOST_API}/imagens/${props.evento.urlImagem}`}
@@ -27,7 +26,7 @@ export default function CardEvento(props: CardEventoProps) {
           </p>
         </div>
 
-        <div className="flex text-sm justify-between mt-3">
+        <div className="flex text-sm justify-between mt-3 max-sm:flex-col max-sm:gap-y-2">
           <p>
             Promovido por{" "}
             <span className="font-bold">{props.evento.usuario.nome}</span>

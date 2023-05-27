@@ -23,8 +23,8 @@ export default function LoginPage() {
   } = useForm({
     resolver: zodResolver(schema),
   });
+
   const { signIn } = useContext(AuthContext);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   async function onSubmit(data: any) {
@@ -88,14 +88,11 @@ export default function LoginPage() {
             )}
           </div>
 
-          {errorMessage && (
-            <div className="w-full flex flex-col items-center mt-10">
-              <span className="text-sm text-red-500">{errorMessage}</span>
-            </div>
-          )}
-
-          <button className="mt-8 text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg">
-            Acessar
+          <button
+            disabled={isLoading}
+            className="mt-8 text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg"
+          >
+            {isLoading ? "Carregando..." : "Acessar"}
           </button>
 
           <Link
