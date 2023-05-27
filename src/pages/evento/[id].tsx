@@ -17,12 +17,14 @@ const schema = z.object({
   codigo: z.string().nonempty("O código do evento é obrigatório"),
 });
 
+type ConfirmarPresencaFormData = z.infer<typeof schema>;
+
 export default function InfoEventoPage() {
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm({
+  } = useForm<ConfirmarPresencaFormData>({
     resolver: zodResolver(schema),
   });
 

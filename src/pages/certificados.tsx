@@ -23,7 +23,6 @@ export default function CertificadosPage() {
       setIsLoading(true);
 
       await getCertificados();
-    } catch {
     } finally {
       setIsLoading(false);
     }

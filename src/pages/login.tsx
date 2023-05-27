@@ -15,12 +15,14 @@ const schema = z.object({
   senha: z.string().nonempty("A senha é obrigatória"),
 });
 
+type LoginFormData = z.infer<typeof schema>;
+
 export default function LoginPage() {
   const {
     handleSubmit,
     register,
     formState: { errors },
-  } = useForm({
+  } = useForm<LoginFormData>({
     resolver: zodResolver(schema),
   });
 
