@@ -3,7 +3,6 @@ import { SkeletonContainer } from "@/components/skeleton-container";
 import { AuthContext } from "@/contexts/auth.context";
 import { Certificado } from "@/entities/certificado";
 import { api } from "@/services/api";
-import { HOST_API } from "@/utils/api-config";
 import { CaretLeft } from "@phosphor-icons/react";
 import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
@@ -30,7 +29,7 @@ export default function CertificadosPage() {
 
   async function getCertificados() {
     try {
-      const response = await api.get(HOST_API + "/certificados/me");
+      const response = await api.get("/certificados/me");
       const responseData = await response.data;
 
       setCertificados(responseData["data"]);

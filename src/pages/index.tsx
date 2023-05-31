@@ -4,7 +4,6 @@ import { TabButton } from "@/components/tab-button";
 import { AuthContext } from "@/contexts/auth.context";
 import { Evento } from "@/entities/evento";
 import { api } from "@/services/api";
-import { HOST_API } from "@/utils/api-config";
 import { IdentificationBadge } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useContext, useEffect, useState } from "react";
@@ -41,7 +40,7 @@ export default function HomePage() {
 
   async function getEventos() {
     try {
-      const response = await api.get(HOST_API + "/eventos");
+      const response = await api.get("/eventos");
       const responseData = await response.data;
 
       setEventos(responseData["data"]);
@@ -50,7 +49,7 @@ export default function HomePage() {
 
   async function getEventosInscritos() {
     try {
-      const response = await api.get(HOST_API + "/eventos/inscritos");
+      const response = await api.get("/eventos/inscritos");
       const responseData = response.data;
 
       setEventosIncritos(responseData["data"]);
