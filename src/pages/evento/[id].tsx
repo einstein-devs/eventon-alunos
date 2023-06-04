@@ -73,7 +73,6 @@ export default function InfoEventoPage() {
   const dataAtual = new Date();
 
   function isIniciado(): boolean {
-    console.log("oie");
     return (
       new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf() &&
       new Date(evento.dataHoraInicio).valueOf() <= dataAtual.valueOf()
@@ -81,10 +80,6 @@ export default function InfoEventoPage() {
   }
 
   function isDisponivel(): boolean {
-    console.log("oie3");
-    console.log(
-      new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf()
-    );
     return new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf();
   }
 
