@@ -4,7 +4,9 @@ import { AuthContext } from "@/contexts/auth.context";
 import { Certificado } from "@/entities/certificado";
 import { api } from "@/services/api";
 import { CaretLeft } from "@phosphor-icons/react";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import { parseCookies } from "nookies";
 import { useContext, useEffect, useState } from "react";
 
 export default function CertificadosPage() {
@@ -77,3 +79,20 @@ export default function CertificadosPage() {
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<any> = async (context) => {
+  const { "@eventon.token": token } = parseCookies(context);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

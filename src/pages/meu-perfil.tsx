@@ -1,7 +1,9 @@
 import { AuthContext } from "@/contexts/auth.context";
 import { CaretLeft } from "@phosphor-icons/react";
+import { GetServerSideProps } from "next";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { parseCookies } from "nookies";
 import { useContext } from "react";
 
 export default function MeuPerfilPage() {
@@ -34,9 +36,12 @@ export default function MeuPerfilPage() {
 
         <section className="w-full flex-1 flex flex-col justify-between">
           <div className="flex w-full flex-col gap-y-2">
-            <button className="h-[42px] flex items-center justify-center bg-orange-100 text-orange-400 border border-orange-400 font-bold w-full rounded-lg">
+            <Link
+              href="/editar-perfil"
+              className="h-[42px] flex items-center justify-center bg-orange-100 text-orange-400 border border-orange-400 font-bold w-full rounded-lg"
+            >
               Editar perfil
-            </button>
+            </Link>
 
             <Link
               href="/certificados"
@@ -57,3 +62,20 @@ export default function MeuPerfilPage() {
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<any> = async (context) => {
+  const { "@eventon.token": token } = parseCookies(context);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+};

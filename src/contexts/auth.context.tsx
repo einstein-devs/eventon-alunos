@@ -1,7 +1,7 @@
 import { Usuario } from "@/entities/usuario";
 import { api } from "@/services/api";
 import { getUserInformation, LoginData, signInRequest } from "@/services/auth";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import { destroyCookie, parseCookies, setCookie } from "nookies";
 import { createContext, useEffect, useState } from "react";
 
@@ -16,6 +16,7 @@ type AuthContextType = {
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }: any) {
+  const router = useRouter();
   const [user, setUser] = useState<Usuario | null>(null);
   const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
 
@@ -31,6 +32,7 @@ export function AuthProvider({ children }: any) {
 
       console.log("TRY LOAD USER");
       console.log(token);
+      console.log(router.pathname);
       if (token) {
         setIsLoadingUser(true);
 
@@ -44,8 +46,7 @@ export function AuthProvider({ children }: any) {
           signOut();
         }
       }
-    } catch (e) {
-      console.log(e);
+    } catch {
       signOut();
     } finally {
       setIsLoadingUser(false);
