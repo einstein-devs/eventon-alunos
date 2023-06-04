@@ -5,20 +5,12 @@ import { useRouter } from "next/router";
 import { useContext } from "react";
 
 export default function MeuPerfilPage() {
-  const { isLoadingUser, user, signOut } = useContext(AuthContext);
+  const { user, signOut } = useContext(AuthContext);
 
   const router = useRouter();
 
   function voltarPaginaAnterior() {
     router.back();
-  }
-
-  if (isLoadingUser) {
-    return (
-      <div>
-        <p>Loading...</p>
-      </div>
-    );
   }
 
   return (

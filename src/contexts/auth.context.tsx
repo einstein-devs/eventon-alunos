@@ -29,6 +29,8 @@ export function AuthProvider({ children }: any) {
     try {
       const { "@eventon.token": token } = parseCookies();
 
+      console.log("TRY LOAD USER");
+      console.log(token);
       if (token) {
         setIsLoadingUser(true);
 
@@ -71,14 +73,6 @@ export function AuthProvider({ children }: any) {
     setUser(null);
   }
 
-  if (isLoadingUser) {
-    return (
-      <div className="w-screen h-screen flex items-center justify-center">
-        <p className="text-sm text-center">Carregando usuario</p>
-      </div>
-    );
-  }
-
   return (
     <AuthContext.Provider
       value={{
@@ -89,7 +83,13 @@ export function AuthProvider({ children }: any) {
         signOut,
       }}
     >
-      {children}
+      {isLoadingUser ? (
+        <div className="w-screen h-screen flex items-center justify-center">
+          <p className="text-sm text-center">Carregando usuario</p>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 }

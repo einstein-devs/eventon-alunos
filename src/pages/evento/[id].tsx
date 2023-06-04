@@ -49,6 +49,11 @@ export default function InfoEventoPage() {
     }
   }, [query.id]);
 
+  useEffect(() => {
+    console.log("user");
+    console.log(user);
+  }, [user]);
+
   async function loadScreen() {
     try {
       const response = await api.get(`/eventos/${query["id"]}`, {
@@ -68,10 +73,19 @@ export default function InfoEventoPage() {
   const dataAtual = new Date();
 
   function isIniciado(): boolean {
+    console.log("oie");
     return (
       new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf() &&
       new Date(evento.dataHoraInicio).valueOf() <= dataAtual.valueOf()
     );
+  }
+
+  function isDisponivel(): boolean {
+    console.log("oie3");
+    console.log(
+      new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf()
+    );
+    return new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf();
   }
 
   function isFinalizado(): boolean {
@@ -283,7 +297,7 @@ export default function InfoEventoPage() {
             </button>
           )}
 
-          {!isFinalizado() && !isIniciado() && !evento.estaInscrito && user && (
+          {isDisponivel() && !evento.estaInscrito && user && (
             <button
               onClick={confirmarInscricao}
               className="text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg"
