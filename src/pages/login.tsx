@@ -35,10 +35,13 @@ export default function LoginPage() {
 
       await signIn(data);
     } catch (error: any) {
-      toast.error(error?.message ?? "Ocorreu um erro ao realizar login!", {
-        closeButton: true,
-        closeOnClick: true,
-      });
+      toast.error(
+        error?.response?.data.message ?? "Ocorreu um erro ao realizar login!",
+        {
+          closeButton: true,
+          closeOnClick: true,
+        }
+      );
     } finally {
       setIsLoading(false);
     }
@@ -98,7 +101,7 @@ export default function LoginPage() {
           </button>
 
           <Link
-            href="/recuperar-senha"
+            href="/esqueci-senha"
             className="text-orange-400 font-semibold text-center mt-6 block"
           >
             Esqueceu sua Senha?

@@ -80,7 +80,10 @@ export default function InfoEventoPage() {
   }
 
   function isDisponivel(): boolean {
-    return new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf();
+    return (
+      new Date(evento.dataHoraTermino).valueOf() > dataAtual.valueOf() &&
+      new Date(evento.dataHoraInicio).valueOf() > dataAtual.valueOf()
+    );
   }
 
   function isFinalizado(): boolean {
@@ -281,15 +284,22 @@ export default function InfoEventoPage() {
               Certificado gerado!
             </Link>
           )}
-          {user && evento.estaInscrito && !evento.estaConfimado && (
-            <button
-              onClick={handleOpenModal}
-              className="text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg"
-            >
-              {isLoadingPresenca
-                ? "Confirmando presença..."
-                : "Confirmar presença"}
-            </button>
+          {user &&
+            evento.estaInscrito &&
+            !evento.estaConfimado &&
+            isIniciado() && (
+              <button
+                onClick={handleOpenModal}
+                className="text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg"
+              >
+                {isLoadingPresenca
+                  ? "Confirmando presença..."
+                  : "Confirmar presença"}
+              </button>
+            )}
+
+          {evento.estaInscrito && !evento.estaConfimado && !isIniciado() && (
+            <p className="text-orange-400">Aguardando inicio...</p>
           )}
 
           {isDisponivel() && !evento.estaInscrito && user && (
