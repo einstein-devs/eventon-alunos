@@ -1,5 +1,6 @@
 import { api } from "@/services/api";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -27,7 +28,13 @@ const schema = z
 
 type RecuperarSenhaFormData = z.infer<typeof schema>;
 
-export default function RecuperarSenhaPage() {
+type RecuperarSenhaPageProps = {
+  codigoError: boolean;
+};
+
+export default function RecuperarSenhaPage({
+  codigoError,
+}: RecuperarSenhaPageProps) {
   const {
     handleSubmit,
     register,
@@ -39,6 +46,10 @@ export default function RecuperarSenhaPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const router = useRouter();
+
+  function voltarInicio() {
+    router.replace("/");
+  }
 
   async function onSubmit(data: RecuperarSenhaFormData) {
     try {
@@ -63,6 +74,22 @@ export default function RecuperarSenhaPage() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  if (codigoError) {
+    return (
+      <main className="h-screen w-screen bg-white flex flex-col max-w-screen-sm mx-auto items-center justify-center">
+        <h1 className="font-bold text-2xl">Ocorreu um erro!</h1>
+        <p>Data limite para redefinição de senha excedida!</p>
+
+        <button
+          onClick={voltarInicio}
+          className="mt-8 text-white h-[42px] flex items-center justify-center bg-orange-400 font-bold w-full rounded-lg"
+        >
+          Voltar
+        </button>
+      </main>
+    );
   }
 
   return (
@@ -117,3 +144,24 @@ export default function RecuperarSenhaPage() {
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<
+  RecuperarSenhaPageProps
+> = async (ctx) => {
+  try {
+    await api.post(`/usuarios/redefinir-senha/validar/${ctx.query["id"]}`);
+
+    return {
+      props: {
+        codigoError: false,
+      },
+    };
+  } catch (_) {
+    console.log(_);
+    return {
+      props: {
+        codigoError: true,
+      },
+    };
+  }
+};

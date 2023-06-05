@@ -49,11 +49,6 @@ export default function InfoEventoPage() {
     }
   }, [query.id]);
 
-  useEffect(() => {
-    console.log("user");
-    console.log(user);
-  }, [user]);
-
   async function loadScreen() {
     try {
       const response = await api.get(`/eventos/${query["id"]}`, {
